@@ -8,15 +8,12 @@ const resolvers = {
     getUsers: () => {
       return users;
     },
-
     getUser: (_, { id }) => {
       return users.find((user) => user.id === parseInt(id));
     },
-
     getExpenses: () => {
       return expenses;
     },
-
     getExpense: (_, { id }) => {
       return expenses.find((expense) => expense.id === parseInt(id));
     },
@@ -34,18 +31,20 @@ const resolvers = {
     },
 
     updateUser: (_, { id, updateUserDto }) => {
-      let user = users.find((user) => user.id === parseInt(id));
-      if (!user) return null;
+      const userIndex = users.findIndex((user) => user.id === parseInt(id));
+      if (userIndex === -1) return null;
 
-      user = { ...user, ...updateUserDto };
-      users = users.map((u) => (u.id === parseInt(id) ? user : u));
-      return user;
+      const updatedUser = { ...users[userIndex], ...updateUserDto };
+      users[userIndex] = updatedUser;
+      return updatedUser;
     },
 
     deleteUser: (_, { id }) => {
-      const initialLength = users.length;
-      users = users.filter((user) => user.id !== parseInt(id));
-      return users.length < initialLength;
+      const index = users.findIndex((user) => user.id === parseInt(id));
+      if (index === -1) return false;
+
+      users.splice(index, 1);
+      return true;
     },
 
     createExpense: (_, { createExpenseDto }) => {
@@ -62,20 +61,22 @@ const resolvers = {
     },
 
     updateExpense: (_, { id, updateExpenseDto }) => {
-      let expense = expenses.find((exp) => exp.id === parseInt(id));
-      if (!expense) return null;
+      const expenseIndex = expenses.findIndex((exp) => exp.id === parseInt(id));
+      if (expenseIndex === -1) return null;
 
-      expense = { ...expense, ...updateExpenseDto };
-      expenses = expenses.map((exp) =>
-        exp.id === parseInt(id) ? expense : exp
-      );
-      return expense;
+      const updatedExpense = { ...expenses[expenseIndex], ...updateExpenseDto };
+      expenses[expenseIndex] = updatedExpense;
+      return updatedExpense;
     },
 
     deleteExpense: (_, { id }) => {
-      const initialLength = expenses.length;
-      expenses = expenses.filter((expense) => expense.id !== parseInt(id));
-      return expenses.length < initialLength;
+      const index = expenses.findIndex(
+        (expense) => expense.id === parseInt(id)
+      );
+      if (index === -1) return false;
+
+      expenses.splice(index, 1);
+      return true;
     },
   },
 
@@ -99,4 +100,4 @@ const server = new ApolloServer({
 
 const { url } = await startStandaloneServer(server);
 
-console.log(url);
+console.log(`Server ready at ${url}`);
