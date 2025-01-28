@@ -1,6 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { schema } from "./schema.js";
+import { typeDefs } from "./schema.js";
 import { expenses, users } from "./data.js";
 
 const resolvers = {
@@ -93,7 +93,7 @@ const resolvers = {
 };
 
 const server = new ApolloServer({
-  schema,
+  typeDefs,
   resolvers,
 });
 
